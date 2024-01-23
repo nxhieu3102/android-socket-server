@@ -26,8 +26,18 @@ let availablePlayer = null;
 io.on('connection', (socket) => {
     console.log(`User ${socket.id} connected`);
 
+    socket.on('disconnect', () => {
+        console.log(`User ${socket.id} disconnected`);
+        if(availablePlayer == socket.id){
+            availablePlayer = null;
+        }
+    });
+    
     socket.on('find_match', () => {
         console.log(`${socket.id} find_match`);
+        if(availablePlayer == socket.id){
+            return;
+        }
         if (availablePlayer != null) {
             console.log(`match found with ${availablePlayer} and ${socket.id}`);
             const socketMsg = new SocketMsgModel({
@@ -51,10 +61,9 @@ io.on('connection', (socket) => {
     });
 
     socket.on('move', (msg) => {
-        console.log(`${socket.id} move ${msg}`);
-        console.log(msg)
         const socketMsg = SocketMsgModel.fromJson(msg);
-        console.log(socketMsg)
+        console.log(`${socket.id} move`);
+        console.log(socketMsg);
         socket.to(socketMsg.competitorSocketId).emit('move', msg);
     })
 
@@ -67,7 +76,7 @@ app.get('/', (req, res) => {
 });
 
 server.listen(3000, () => {
-    console.log(`Server is running on http://${IP.address()}:${PORT}`);
+    console.log(`Server is running on http://${IP.address()}:${3000}`);
 });
 
 
