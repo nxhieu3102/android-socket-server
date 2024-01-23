@@ -62,6 +62,7 @@ io.on('connection', (socket) => {
 
 // Route handler for GET request to the root URL ("/")
 app.get('/', (req, res) => {
+    console.log('GET /');
     res.send('Hello, World!');
 });
 
